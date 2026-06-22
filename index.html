@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SafeSteel AI — Industrial Safety Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<script
+src="https://maps.googleapis.com/maps/api/js?key="></script>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z" stroke="currentColor" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="brand-title">SafeSteel <span>AI</span></div>
+        <div class="brand-sub">Predict Before It Happens</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item active" data-tab="dashboard"><span class="dot"></span> Dashboard · Digital Twin</a>
+      <a class="nav-item" data-tab="risk"><span class="dot"></span> AI Risk Engine</a>
+      <a class="nav-item" data-tab="cctv"><span class="dot"></span> CCTV · Vision AI</a>
+      <a class="nav-item" data-tab="copilot"><span class="dot"></span> AI Copilot</a>
+      <a class="nav-item" data-tab="emergency"><span class="dot"></span> Emergency Center</a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="plant-card">
+        <div class="row"><span>Plant</span><b>Jamshedpur Works</b></div>
+        <div class="row"><span>Shift</span><b>B · 14:00–22:00</b></div>
+        <div class="row"><span>Workers</span><b id="sb-workers">412</b></div>
+        <div class="row"><span>Uptime</span><b>99.97%</b></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="crumb">SafeSteel AI / <span id="crumb-page">Dashboard</span></div>
+        <h1 id="page-title">Plant Digital Twin</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="status-pill" id="status-pill">
+          <span class="pulse"></span>
+          <span id="status-text">All systems nominal</span>
+        </div>
+        <div class="risk-chip" id="risk-chip">
+          <span>Plant Risk</span>
+          <b id="risk-num">12</b>
+        </div>
+        <button class="btn-primary" id="btn-sim">▶ Run AI Safety Simulation</button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section class="tab active" id="tab-dashboard">
+      <div class="grid-12">
+        <div class="card span-8">
+          <div class="card-head">
+            <h3>Plant Digital Twin · Live</h3>
+            <div class="legend">
+              <span><i class="lg-ok"></i>Safe</span>
+              <span><i class="lg-warn"></i>Watch</span>
+              <span><i class="lg-crit"></i>Critical</span>
+            </div>
+          </div>
+          <div class="twin" id="twin">
+            <svg viewBox="0 0 800 460" class="twin-svg">
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(120,180,255,.08)" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="800" height="460" fill="url(#grid)"/>
+              <!-- zones -->
+              <g id="zones"></g>
+              <!-- workers -->
+              <g id="workers"></g>
+            </svg>
+            <div class="twin-hud">
+              <div><b>6</b><span>Zones monitored</span></div>
+              <div><b id="twin-workers">412</b><span>Workers tracked</span></div>
+              <div><b id="twin-cams">128</b><span>AI cameras</span></div>
+              <div><b id="twin-sensors">2,341</b><span>IoT sensors</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card span-4">
+          <div class="card-head"><h3>Compound Risk Detection</h3><span class="tag" id="risk-tag">LOW</span></div>
+          <div class="gauge">
+            <svg viewBox="0 0 200 120">
+              <path d="M20 110 A 80 80 0 0 1 180 110" stroke="rgba(255,255,255,.08)" stroke-width="14" fill="none" stroke-linecap="round"/>
+              <path id="gauge-arc" d="M20 110 A 80 80 0 0 1 180 110" stroke="url(#gg)" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="220"/>
+              <defs>
+                <linearGradient id="gg" x1="0" x2="1">
+                  <stop offset="0" stop-color="#22d3ee"/>
+                  <stop offset=".5" stop-color="#fbbf24"/>
+                  <stop offset="1" stop-color="#ef4444"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="gauge-num"><b id="gauge-val">12</b><span>Risk Score</span></div>
+          </div>
+          <div class="reason" id="reason-box">
+            <div class="reason-title">AI reasoning</div>
+            <ul id="reason-list">
+              <li>Sensors within normal range</li>
+              <li>No active hot-work permits in hazard zones</li>
+              <li>PPE compliance 98.2% across active shifts</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card span-4">
+          <div class="card-head"><h3>Methane (CH₄) ppm</h3><span class="tag mono" id="ch4-val">8 ppm</span></div>
+          <canvas id="ch4-chart" height="120"></canvas>
+        </div>
+        <div class="card span-4">
+          <div class="card-head"><h3>Temperature °C</h3><span class="tag mono" id="temp-val">142°C</span></div>
+          <canvas id="temp-chart" height="120"></canvas>
+        </div>
+        <div class="card span-4">
+          <div class="card-head"><h3>Pressure (bar)</h3>
+            <div class="card span-4">
+
+    <div class="card-head">
+
+        <h3>External Weather</h3>
+
+        <span class="tag" id="weather-tag">
+
+            LIVE
+
+        </span>
+
+    </div>
+
+    <div class="weather-box">
+
+        <h2 id="weather-temp">--°C</h2>
+
+        <p id="weather-type">
+
+            Loading...
+
+        </p>
+
+        <div class="weather-grid">
+
+            <div>
+
+                💧
+
+                <span id="humidity">
+
+                    --
+
+                </span>
+
+            </div>
+
+            <div>
+
+                💨
+
+                <span id="wind">
+
+                    --
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="impact">
+
+            <b>
+
+                AI Impact
+
+            </b>
+
+            <p id="weather-impact">
+
+                Calculating...
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+<span class="tag mono" id="pres-val">4.2 bar</span></div>
+          <canvas id="pres-chart" height="120"></canvas>
+        </div>
+
+        <div class="card span-12">
+          <div class="card-head"><h3>Live Event Stream</h3><span class="muted">Real-time correlation across IoT + Vision + Permits</span></div>
+          <div class="events" id="events">
+            <div class="event"><span class="t">14:02:11</span><span class="src">SENSOR</span> Methane baseline 8 ppm at Coke Oven Battery 4</div>
+            <div class="event"><span class="t">14:02:09</span><span class="src vision">VISION</span> 412 workers tracked across 6 zones</div>
+            <div class="event"><span class="t">14:02:01</span><span class="src ok">SYSTEM</span> SafeSteel AI online · models v4.2.1</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RISK ENGINE -->
+    <section class="tab" id="tab-risk">
+      <div class="grid-12">
+        <div class="card span-12">
+          <div class="card-head"><h3>Signal Correlation Matrix</h3><span class="muted">Independent signals → compound risk</span></div>
+          <div class="signals">
+            <div class="sig" data-sig="ch4"><div class="sig-head">Gas (CH₄)</div><div class="sig-bar"><i style="width:8%"></i></div><div class="sig-val">8 ppm · normal</div></div>
+            <div class="sig" data-sig="temp"><div class="sig-head">Temperature</div><div class="sig-bar"><i style="width:30%"></i></div><div class="sig-val">142°C · normal</div></div>
+            <div class="sig" data-sig="permit"><div class="sig-head">Hot-work permit</div><div class="sig-bar"><i style="width:0%"></i></div><div class="sig-val">none active</div></div>
+            <div class="sig" data-sig="ppe"><div class="sig-head">PPE compliance</div><div class="sig-bar"><i style="width:98%"></i></div><div class="sig-val">98.2%</div></div>
+            <div class="sig" data-sig="vent"><div class="sig-head">Ventilation</div><div class="sig-bar"><i style="width:92%"></i></div><div class="sig-val">nominal</div></div>
+            <div class="sig" data-sig="prox"><div class="sig-head">Worker proximity</div><div class="sig-bar"><i style="width:20%"></i></div><div class="sig-val">3 in zone</div></div>
+          </div>
+        </div>
+        <div class="card span-8">
+          <div class="card-head"><h3>Explosion Probability Forecast</h3><span class="tag mono" id="prob-val">2%</span></div>
+          <canvas id="prob-chart" height="180"></canvas>
+        </div>
+        <div class="card span-4">
+          <div class="card-head"><h3>Top Predicted Hazards</h3></div>
+          <ol class="hazards">
+            <li><b>Coke Oven Battery 4</b><span>Gas leak + ignition risk</span></li>
+            <li><b>Blast Furnace 3</b><span>Thermal stress</span></li>
+            <li><b>LD Converter 2</b><span>Slopping risk</span></li>
+            <li><b>Rolling Mill</b><span>PPE non-compliance</span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- CCTV -->
+    <section class="tab" id="tab-cctv">
+      <div class="grid-12">
+        <div class="card span-8">
+          <div class="card-head">
+
+    <h3>Camera CAM-07 · Coke Oven Battery 4</h3>
+
+    <div>
+
+        <input
+            type="file"
+            id="vision-upload"
+            accept="image/*"
+            hidden
+        >
+
+        <button
+            id="upload-btn"
+            class="btn-primary"
+        >
+            📷 Analyze Image
+        </button>
+
+    </div>
+
+</div>
+          <div class="cctv">
+            <div class="cctv-scene">
+              <div class="cctv-overlay">
+              </div><img id="vision-preview" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;
+">
+              <div class="bbox helmet-ok" style="left:18%;top:32%;width:14%;height:34%"><span>Worker #03 · PPE ✓</span></div>
+              <div class="bbox helmet-ok" style="left:54%;top:40%;width:13%;height:32%"><span>Worker #11 · PPE ✓</span></div>
+              <div class="bbox helmet-bad" id="bbox-violation" style="left:36%;top:38%;width:13%;height:34%;display:none"><span>Worker #07 · NO HELMET</span></div>
+              <div class="scan"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card span-4">
+          <div class="card-head"><h3>Vision AI Detections</h3></div>
+          <ul class="detections" id="detections">
+            <li><span class="dot ok"></span> Helmet detected — 3 workers</li>
+            <li><span class="dot ok"></span> High-vis vest detected — 3 workers</li>
+            <li><span class="dot ok"></span> Restricted zone clear</li>
+          </ul>
+        </div>
+        <div class="card span-12">
+          <div class="card-head"><h3>Camera Grid</h3><span class="muted">128 AI cameras · 6 zones</span></div>
+          <div class="cam-grid">
+            <div class="cam"><span>CAM-01 · Blast Furnace 3</span></div>
+            <div class="cam"><span>CAM-04 · LD Converter 2</span></div>
+            <div class="cam alert"><span>CAM-07 · Coke Oven 4</span></div>
+            <div class="cam"><span>CAM-12 · Sinter Plant</span></div>
+            <div class="cam"><span>CAM-18 · Rolling Mill</span></div>
+            <div class="cam"><span>CAM-22 · Caster Bay</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COPILOT -->
+    <section class="tab" id="tab-copilot">
+      <div class="grid-12">
+        <div class="card span-8">
+          <div class="card-head"><h3>AI Copilot</h3><span class="muted">Grounded in live plant state</span></div>
+          <div class="chat" id="chat">
+            <div class="msg ai">
+<b>SafeSteel AI</b>
+
+<p>
+
+Hello.
+
+I'm continuously monitoring
+
+• 2,341 IoT sensors
+
+• 128 AI Cameras
+
+• 412 workers
+
+• 6 production zones
+
+Ask me anything about plant safety, risk prediction, evacuation plans, CCTV observations, PPE compliance, or live sensor status.
+
+</p>
+
+</div>
+          </div>
+          <div class="chat-input">
+    <button id="voice-btn" class="btn-primary">🎤</button>
+
+    <input
+        id="chat-text"
+        placeholder="Ask SafeSteel AI..."
+        autocomplete="off"
+    />
+
+    <button id="chat-send" class="btn-primary">
+        Send
+    </button>
+</div>
+        </div>
+        <div class="card span-4">
+          <div class="card-head"><h3>Suggested questions</h3></div>
+          <div class="suggest">
+            <button data-q="What is the current risk at Coke Oven 4?">Risk at Coke Oven 4?</button>
+            <button data-q="Why did the risk score spike?">Why did the risk spike?</button>
+            <button data-q="Show evacuation plan">Show evacuation plan</button>
+            <button data-q="Which workers are in danger?">Workers in danger?</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMERGENCY -->
+    <section class="tab" id="tab-emergency">
+      <div class="grid-12">
+        <div class="card span-12 emergency-banner" id="emg-banner">
+          <div>
+            <div class="emg-state" id="emg-state">STANDBY</div>
+            <div class="emg-sub" id="emg-sub">No active emergency. Plant operating normally.</div>
+          </div>
+          <div class="emg-timer"><b id="emg-timer">--:--</b><span>Evac countdown</span></div>
+        </div>
+        <div class="card span-6">
+          <div class="card-head"><h3>Automated Response Plan</h3></div>
+          <ol class="response" id="response-list">
+            <li class="pending">Detect compound risk signature</li>
+            <li class="pending">Activate zone sirens & strobes</li>
+            <li class="pending">Lock high-risk zones · isolate gas valves</li>
+            <li class="pending">Broadcast evacuation routes to wearables</li>
+            <li class="pending">Notify response team & local authorities</li>
+            <li class="pending">Auto-generate incident report</li>
+          </ol>
+        </div>
+        <div class="card span-6">
+          <div class="card-head"><h3>Notified Personnel</h3></div>
+          <ul class="people" id="people">
+            <li><b>R. Sharma</b><span>Plant Safety Officer</span><i class="badge">Standby</i></li>
+            <li><b>A. Iyer</b><span>Shift Supervisor · B</span><i class="badge">Standby</i></li>
+            <li><b>M. Khan</b><span>Fire Response Lead</span><i class="badge">Standby</i></li>
+            <li><b>P. Banerjee</b><span>Operations Head</span><i class="badge">Standby</i></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card span-12">
+
+    <div class="card-head">
+
+        <h3>Emergency Evacuation Map</h3>
+
+        <span class="tag live">
+
+            LIVE
+
+        </span>
+
+    </div>
+
+    <div id="evac-map"></div>
+
+</div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
